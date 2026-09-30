@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MicroMath - Microwave Wattage Translator</title>
+<style>
+  :root {
+    --bg: #f6f1e7; --card: #fffdf8; --ink: #2b2118; --muted: #7a6c5d;
+    --accent: #d9680c; --accent-soft: #fdeeda; --line: #e6dccb;
+    --ok: #1e7d43; --warn: #b3541e; --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 20px 16px 60px; }
+  header h1 { font-size: 30px; margin: 10px 0 2px; letter-spacing: -0.5px; }
+  header p { color: var(--muted); margin: 0 0 18px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 18px 20px; margin: 0 0 18px; box-shadow: 0 1px 3px rgba(60,40,10,.06); }
+  .card h2 { margin: 0 0 4px; font-size: 19px; }
+  .card .sub { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  label { display: block; font-size: 12.5px; color: var(--muted); margin-bottom: 3px; font-weight: 600; }
+  input, select { width: 100%; padding: 9px 10px; font-size: 16px; border: 1px solid var(--line);
+    border-radius: 9px; background: #fff; color: var(--ink); }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 2px; }
+  .presets button { border: 1px solid var(--line); background: var(--accent-soft); color: var(--ink);
+    border-radius: 999px; padding: 6px 13px; font-size: 13px; cursor: pointer; }
+  .presets button:hover { border-color: var(--accent); }
+  .result { margin-top: 15px; background: var(--accent-soft); border: 1px solid #f2d9b5;
+    border-radius: 12px; padding: 14px 16px; }
+  .big { font: 700 40px/1.1 var(--mono); color: var(--accent); letter-spacing: -1px; }
+  .big small { font-size: 15px; color: var(--muted); font-weight: 600; letter-spacing: 0; }
+  .rows { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 8px 18px; margin-top: 12px; }
+  .rows div { font-size: 13.5px; }
+  .rows b { display: block; font-size: 15.5px; font-family: var(--mono); }
+  .advice { margin-top: 12px; font-size: 14px; padding: 9px 12px; border-radius: 9px; }
+  .advice.ok { background: #e9f6ee; color: var(--ok); }
+  .advice.warn { background: #fdeee4; color: var(--warn); }
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14.5px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  tr.you { background: var(--accent-soft); font-weight: 700; }
+  tr.you td:first-child::after { content: " <- yours"; color: var(--accent); font-size: 12px; }
+  .note { font-size: 13px; color: var(--muted); margin-top: 12px; }
+  .err { background: #fbe3e3; color: #8f1d1d; border-radius: 9px; padding: 9px 12px;
+    font-size: 14px; margin-top: 12px; display: none; }
+  .use-btn { margin-top: 10px; border: 0; background: var(--accent); color: #fff; border-radius: 9px;
+    padding: 9px 16px; font-size: 14.5px; cursor: pointer; }
+  .sources { font-size: 13px; color: var(--muted); }
+  .sources a { color: var(--accent); }
+  footer { font-size: 12.5px; color: var(--muted); text-align: center; margin-top: 26px; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>MicroMath</h1>
+    <p>The package says 3 minutes at 1100 W. Your dorm oven is 700 W. Now what?</p>
+  </header>
+
+  <section class="card">
+    <h2>Time translator</h2>
+    <p class="sub">Frozen meals and recipes are written for one oven wattage, almost never yours. Same energy in, same dinner out.</p>
+    <div class="grid">
+      <div><label for="recipeW">Package wattage (W)</label><input id="recipeW" type="number" min="100" max="3000" step="50" value="1100"></div>
+      <div><label for="yourW">Your wattage (W)</label><input id="yourW" type="number" min="100" max="3000" step="50" value="700"></div>
+      <div><label for="min">Cooking time - min</label><input id="min" type="number" min="0" max="60" step="1" value="3"></div>
+      <div><label for="sec">Cooking time - sec</label><input id="sec" type="number" min="0" max="59" step="5" value="0"></div>
+      <div><label for="recipeL">Package power level</label>
+        <select id="recipeL"><option>100</option><option>70</option><option>50</option><option>30</option></select></div>
+      <div><label for="yourL">Your power level</label>
+        <select id="yourL"><option>100</option><option>70</option><option>50</option><option>30</option></select></div>
+      <div><label for="standM">Standing time - min</label><input id="standM" type="number" min="0" max="30" step="1" value="2"></div>
+      <div><label for="standS">Standing time - sec</label><input id="standS" type="number" min="0" max="59" step="5" value="0"></div>
+    </div>
+    <div class="presets">
+      <button data-p="lasagne">Frozen lasagne, dorm oven</button>
+      <button data-p="mug">Mug meal, office oven</button>
+      <button data-p="soup">Soup at power level 5</button>
+    </div>
+    <div class="err" id="convErr"></div>
+    <div class="result" id="convResult">
+      <div class="big"><span id="rTime">4:43</span> <small>exact (keypad: <span id="rKeypad">4:45</span>)</small></div>
+      <div class="rows">
+        <div>Ratio<b id="rRatio">1.571x</b></div>
+        <div>Change<b id="rPct">+57%</b></div>
+        <div>Package effective<b id="rRecEff">1100 W</b></div>
+        <div>Your effective<b id="rYouEff">700 W</b></div>
+        <div>Energy to food<b id="rEnergy">264 kJ</b></div>
+        <div>Standing (unchanged)<b id="rStand">2:00</b></div>
+      </div>
+      <div class="advice ok" id="rAdvice"></div>
+    </div>
+    <p class="note">Standing time is conduction after the magnetron stops, so it never scales with wattage. Keep it exactly as printed.</p>
+  </section>
+
+  <section class="card">
+    <h2>Don't know your wattage? Do the water test</h2>
+    <p class="sub">The label on the back or inside the door lists it (use the output number, not input). No label? Physics can measure it: P = 4.187 x ml x temp rise / seconds.</p>
+    <div class="grid">
+      <div><label for="wMass">Water (ml)</label><input id="wMass" type="number" min="100" max="2000" step="100" value="1000"></div>
+      <div><label for="wStart">Start temp (&deg;C)</label><input id="wStart" type="number" min="0" max="60" step="0.5" value="10"></div>
+      <div><label for="wEnd">End temp (&deg;C)</label><input id="wEnd" type="number" min="1" max="100" step="0.5" value="20"></div>
+      <div><label for="wSec">Heated for (sec)</label><input id="wSec" type="number" min="10" max="600" step="5" value="60"></div>
+    </div>
+    <div class="err" id="wErr"></div>
+    <div class="result">
+      <div class="big"><span id="wWatts">698</span> <small>watts (call it <span id="wNear">700 W</span>)</small></div>
+      <div class="rows">
+        <div>Temp rise<b id="wDT">10.0 &deg;C</b></div>
+        <div>Energy absorbed<b id="wEnergy">41.9 kJ</b></div>
+      </div>
+      <button class="use-btn" id="useWatts">Use this wattage above</button>
+    </div>
+    <p class="note">Stir before measuring both temps, and use cool water (10-20 &deg;C). Household heat loss makes this an estimate; treat it as plus or minus about 10%. Safety: plain water in a very smooth cup can superheat and erupt - put a wooden stir stick or microwave-safe spoon in the cup and don't overheat.</p>
+  </section>
+
+  <section class="card">
+    <h2>Cheat sheet for this instruction</h2>
+    <p class="sub">The same package time, translated for every common oven rating.</p>
+    <table>
+      <thead><tr><th>Oven rating</th><th>Set the timer to</th></tr></thead>
+      <tbody id="sheetBody"></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <h2>Cooking two portions?</h2>
+    <p class="sub">Twice the food needs more energy, but not exactly twice the time (shape, surface and stirring all matter). Kitchen rule of thumb:</p>
+    <div class="grid">
+      <div><label for="qPortions">Portions in the oven at once</label>
+        <select id="qPortions"><option>1</option><option selected>2</option><option>3</option><option>4</option></select></div>
+    </div>
+    <div class="err" id="qErr"></div>
+    <div class="result">
+      <div class="big"><span id="qTime">7:00</span> <small>for <span id="qN">2</span> portions (<span id="qFactor">x1.5</span>)</small></div>
+    </div>
+    <p class="note">Rough heuristic, not physics. Add the extra time, then check doneness early and finish in 30-second bursts.</p>
+  </section>
+
+  <section class="card sources">
+    <h2>Honesty corner</h2>
+    <p>The formula keeps delivered energy constant: power x time on the package's oven equals power x time on yours. Real food still varies with mass, shape, starting temperature and container, so start with the converted time, check, and add short bursts. A reduced power level on most ovens means the magnetron cycles on and off - the pauses let heat spread inward, so for custards, casseroles and defrosting, keep the printed power level instead of converting it away.</p>
+    <p>Sources:
+      <a href="https://products.geappliances.com/appliance/gea-support-search-content?contentId=19485">GE Appliances - adapting recipes for a different wattage</a> &middot;
+      <a href="https://products.geappliances.com/appliance/gea-support-search-content?contentId=16857">GE Appliances - microwave performance (water) test</a> &middot;
+      <a href="https://www.spikevm.com/calculators/microwave-cooking-time.php">SpikeVM - wattage time conversion formula</a>
+    </p>
+  </section>
+
+  <footer>MicroMath by the hourly app factory &middot; <a href="index.html">about</a> &middot; all math runs in your browser</footer>
+</div>
+<script src="engine.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function num(id) { return parseFloat($(id).value); }
+
+  function conversionInputs() {
+    return {
+      recipeWatts: num('recipeW'), yourWatts: num('yourW'),
+      seconds: (num('min') || 0) * 60 + (num('sec') || 0),
+      recipeLevel: num('recipeL'), yourLevel: num('yourL'),
+      standingSeconds: (num('standM') || 0) * 60 + (num('standS') || 0)
+    };
+  }
+
+  function renderConversion() {
+    var o = conversionInputs();
+    var errs = MicroMath.validateConversionInputs(o);
+    var errBox = $('convErr');
+    if (o.seconds === 0) errs = ['Cooking time must be at least 1 second.'];
+    if (errs.length) {
+      errBox.textContent = errs.join(' ');
+      errBox.style.display = 'block';
+      return;
+    }
+    errBox.style.display = 'none';
+    var r = MicroMath.convertTime(o);
+    $('rTime').textContent = r.display;
+    $('rKeypad').textContent = r.keypadDisplay;
+    $('rRatio').textContent = r.ratio.toFixed(3) + 'x';
+    $('rPct').textContent = (r.pctChange >= 0 ? '+' : '') + Math.round(r.pctChange) + '%';
+    $('rRecEff').textContent = Math.round(r.recipeEffectiveWatts) + ' W';
+    $('rYouEff').textContent = Math.round(r.yourEffectiveWatts) + ' W';
+    $('rEnergy').textContent = (r.energyJoules / 1000).toFixed(1) + ' kJ';
+    $('rStand').textContent = MicroMath.formatMMSS(Math.max(o.standingSeconds, 0)) + (o.standingSeconds ? '' : ' (none)');
+    var adv = $('rAdvice');
+    if (r.direction === 'longer') {
+      adv.className = 'advice warn';
+      adv.textContent = 'Your oven is weaker than the package assumes. Cook ' + r.keypadDisplay + ', check, then finish in 30-second bursts. If the recipe uses a reduced power level, keep that level on your oven too (' +
+        MicroMath.formatMMSS(MicroMath.roundToKeypad(r.sameLevelSeconds)) + ' at the same level preserves the resting structure).';
+    } else if (r.direction === 'shorter') {
+      adv.className = 'advice warn';
+      adv.textContent = 'Your oven is stronger than the package assumes. Start checking a little before ' + r.keypadDisplay + ' - overcooked is forever.';
+    } else {
+      adv.className = 'advice ok';
+      adv.textContent = 'Same effective wattage - the printed time works as written.';
+    }
+    renderSheet(o);
+    renderQuantity(o);
+  }
+
+  function renderSheet(o) {
+    var rows = MicroMath.cheatSheet(o.recipeWatts, o.seconds, o.recipeLevel);
+    var html = '';
+    rows.forEach(function (row) {
+      html += '<tr' + (row.watts === o.yourWatts ? ' class="you"' : '') +
+        '><td>' + row.watts + ' W</td><td>' + row.display + '</td></tr>';
+    });
+    $('sheetBody').innerHTML = html;
+  }
+
+  function renderQuantity(o) {
+    var n = num('qPortions');
+    try {
+      var q = MicroMath.quantityScale(o.seconds, n);
+      $('qErr').style.display = 'none';
+      $('qTime').textContent = q.display;
+      $('qN').textContent = n;
+      $('qFactor').textContent = 'x' + q.factor;
+    } catch (e) {
+      $('qErr').textContent = e.message;
+      $('qErr').style.display = 'block';
+    }
+  }
+
+  function renderWater() {
+    try {
+      var w = MicroMath.waterTestWatts({ massG: num('wMass'), startC: num('wStart'), endC: num('wEnd'), seconds: num('wSec') });
+      $('wErr').style.display = 'none';
+      $('wWatts').textContent = Math.round(w.watts);
+      $('wNear').textContent = w.nearestCommon + ' W';
+      $('wDT').textContent = w.deltaT.toFixed(1) + ' \u00B0C';
+      $('wEnergy').textContent = (w.energyJoules / 1000).toFixed(1) + ' kJ';
+    } catch (e) {
+      $('wErr').textContent = e.message;
+      $('wErr').style.display = 'block';
+    }
+  }
+
+  var PRESETS = {
+    lasagne: { recipeW: 1100, yourW: 700, min: 5, sec: 30, recipeL: 100, yourL: 100, standM: 2, standS: 0 },
+    mug: { recipeW: 1000, yourW: 1200, min: 1, sec: 30, recipeL: 100, yourL: 100, standM: 1, standS: 0 },
+    soup: { recipeW: 1100, yourW: 900, min: 8, sec: 0, recipeL: 50, yourL: 50, standM: 1, standS: 0 }
+  };
+  Array.prototype.forEach.call(document.querySelectorAll('.presets button'), function (b) {
+    b.addEventListener('click', function () {
+      var p = PRESETS[b.getAttribute('data-p')];
+      Object.keys(p).forEach(function (k) { $(k).value = p[k]; });
+      renderConversion();
+    });
+  });
+
+  $('useWatts').addEventListener('click', function () {
+    try {
+      var w = MicroMath.waterTestWatts({ massG: num('wMass'), startC: num('wStart'), endC: num('wEnd'), seconds: num('wSec') });
+      $('yourW').value = w.nearestCommon;
+      renderConversion();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (e) { /* error already shown */ }
+  });
+
+  ['recipeW','yourW','min','sec','recipeL','yourL','standM','standS'].forEach(function (id) {
+    $(id).addEventListener('input', renderConversion);
+  });
+  ['wMass','wStart','wEnd','wSec'].forEach(function (id) {
+    $(id).addEventListener('input', renderWater);
+  });
+  $('qPortions').addEventListener('input', renderConversion);
+
+  renderConversion();
+  renderWater();
+})();
+</script>
+</body>
+</html>
