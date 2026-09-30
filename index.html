@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MicroMath - your microwave is not the package's microwave</title>
+<style>
+  :root {
+    --bg: #f6f1e7; --card: #fffdf8; --ink: #2b2118; --muted: #7a6c5d;
+    --accent: #d9680c; --accent-soft: #fdeeda; --line: #e6dccb;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 48px 18px 60px; }
+  .tag { display: inline-block; background: var(--accent-soft); color: var(--accent);
+    border-radius: 999px; padding: 4px 12px; font-size: 12.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em; }
+  h1 { font-size: 40px; line-height: 1.12; letter-spacing: -1px; margin: 14px 0 12px; }
+  .lede { font-size: 18px; color: var(--muted); margin: 0 0 26px; }
+  .cta { display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+    font-weight: 700; font-size: 17px; padding: 13px 26px; border-radius: 11px; }
+  .cta:hover { filter: brightness(1.06); }
+  .demo { margin: 30px 0; background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 18px 22px; }
+  .demo table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .demo th, .demo td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .demo th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .demo td:last-child { font-weight: 700; }
+  h2 { font-size: 21px; margin: 34px 0 10px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 7px; }
+  .fine { font-size: 13px; color: var(--muted); margin-top: 34px; }
+  .fine a { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="tag">Kitchen physics</span>
+  <h1>Your microwave is not the package's microwave.</h1>
+  <p class="lede">Every frozen meal is timed for one oven wattage, almost never yours.
+  MicroMath translates the printed time to your actual oven, measures your real wattage with a cup of water, and keeps the standing time honest.</p>
+  <a class="cta" href="app.html">Open the translator</a>
+
+  <div class="demo">
+    <table>
+      <thead><tr><th>Package instruction</th><th>Your oven</th><th>Actually cook</th></tr></thead>
+      <tbody>
+        <tr><td>4:00 at 1100 W</td><td>700 W dorm oven</td><td>6:15</td></tr>
+        <tr><td>2:00 at 1000 W</td><td>1200 W office oven</td><td>1:40</td></tr>
+        <tr><td>3:30 at 1000 W</td><td>800 W hand-me-down</td><td>4:25</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>What it does</h2>
+  <ul>
+    <li><b>Time translator</b> - energy is power x time. Same food needs the same energy, so a weaker oven cooks proportionally longer. Power levels count too.</li>
+    <li><b>Wattage water test</b> - heat a measured cup of water, read the temperature rise, get your oven's true output in watts.</li>
+    <li><b>Cheat sheet</b> - the same instruction translated for every common oven rating, 600 W to 1250 W.</li>
+    <li><b>Portion scaling</b> - an honest rule of thumb for cooking two meals at once, with check-early advice.</li>
+    <li><b>Standing time stays put</b> - resting is conduction, not microwaves. It never scales, and MicroMath never touches it.</li>
+  </ul>
+
+  <h2>Why it exists</h2>
+  <p>A 700 W oven needs 57% more time than the 1100 W the package assumes - most people guess, and dinner comes out cold in the middle or lava at the edges. The fix is one multiplication. Nobody should have to do wattage arithmetic hungry.</p>
+
+  <p class="fine">Built by the hourly app factory. Runs entirely in your browser - no accounts, no tracking.
+  Sources: <a href="https://products.geappliances.com/appliance/gea-support-search-content?contentId=19485">GE Appliances recipe adaptation</a>,
+  <a href="https://products.geappliances.com/appliance/gea-support-search-content?contentId=16857">GE water performance test</a>,
+  <a href="https://www.spikevm.com/calculators/microwave-cooking-time.php">SpikeVM conversion formula</a>.</p>
+</div>
+</body>
+</html>
